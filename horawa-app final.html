@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horawa - කාල හෝරාව</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Sinhala', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 10px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #2196F3;
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #2196F3;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .time-format-toggle {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .time-format-btn {
+            padding: 6px 14px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .time-format-btn.active {
+            background: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 11px;
+            margin-bottom: 5px;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        select, input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 4px rgba(33,150,243,0.3);
+        }
+
+        button {
+            padding: 8px 16px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            grid-column: 1 / -1;
+        }
+
+        button:hover {
+            background: #1976D2;
+        }
+
+        .sun-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f0f7ff;
+            border-radius: 8px;
+        }
+
+        .sun-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .sun-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .sun-time {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2196F3;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .home-view {
+            padding: 15px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .current-time {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .current-hora-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .current-hora-main {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .current-hora-sub {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .current-hora-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .current-hora-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2196F3;
+        }
+
+        .current-hora-time {
+            font-size: 13px;
+            color: #666;
+            font-family: 'Monaco', 'Courier New', monospace;
+            margin-bottom: 10px;
+        }
+
+        .current-hora-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .status-good {
+            background: #90EE90;
+            color: #1b5e20;
+        }
+
+        .status-bad {
+            background: #FFB6C1;
+            color: #b71c1c;
+        }
+
+        .status-neutral {
+            background: #E0E0E0;
+            color: #333;
+        }
+
+        .sub-hora-progress-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .sub-hora-progress-bar {
+            display: flex;
+            gap: 2px;
+            height: 60px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sub-hora-segment {
+            flex: 1;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            position: relative;
+            font-weight: 600;
+            font-size: 9px;
+            color: white;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 60px;
+        }
+
+        .sub-hora-segment:hover {
+            transform: scale(1.05);
+        }
+
+        .sub-hora-segment.good {
+            background: #90EE90;
+            color: #1b5e20;
+        }
+
+        .sub-hora-segment.bad {
+            background: #FF6B6B;
+            color: white;
+        }
+
+        .sub-hora-segment.neutral {
+            background: #87CEEB;
+            color: #00246b;
+        }
+
+        .sub-hora-segment.good-visha {
+            background: #FF6B6B;
+            color: white;
+        }
+
+        .sub-hora-segment.bad-visha {
+            background: #FF6B6B;
+            color: white;
+        }
+
+        .sub-hora-segment.neutral-visha {
+            background: #FF6B6B;
+            color: white;
+        }
+
+        .sub-hora-segment.active {
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.5), 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .sub-hora-segment-label {
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .sub-hora-segment-time {
+            font-size: 7px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .sub-hora-pin {
+            position: absolute;
+            top: -10px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #FF6B6B;
+            z-index: 10;
+        }
+
+        .sub-hora-pin::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: -8px;
+            width: 16px;
+            height: 20px;
+            background: #FF6B6B;
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+        }
+
+        .sub-hora-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .sub-hora-legend {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 11px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .legend-color.good {
+            background: #90EE90;
+        }
+
+        .legend-color.bad {
+            background: #FF6B6B;
+        }
+
+        .legend-color.neutral {
+            background: #87CEEB;
+        }
+
+        .rahu-kala-home {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .rahu-kala-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 3px solid #FF7070;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .rahu-kala-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #d32f2f;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .rahu-kala-time {
+            font-size: 14px;
+            font-weight: 700;
+            color: #d32f2f;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .rahu-kala-indicator {
+            font-size: 20px;
+            margin-top: 4px;
+        }
+
+        .hora-table-section {
+            margin-top: 20px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+            border-left: 4px solid #2196F3;
+            padding-left: 10px;
+        }
+
+        .hora-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .hora-table thead {
+            background: #f5f5f5;
+        }
+
+        .hora-table th {
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+            color: #555;
+            font-size: 11px;
+        }
+
+        .hora-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .hora-table tbody tr {
+            transition: background 0.2s;
+        }
+
+        .hora-good {
+            background: #f1f8f6 !important;
+        }
+
+        .hora-good td {
+            border-left: 4px solid #90EE90;
+        }
+
+        .hora-bad {
+            background: #fef5f5 !important;
+        }
+
+        .hora-bad td {
+            border-left: 4px solid #FFB6C1;
+        }
+
+        .hora-neutral {
+            background: #fafafa !important;
+        }
+
+        .hora-neutral td {
+            border-left: 4px solid #E0E0E0;
+        }
+
+        .hora-current {
+            background: #fff9e6 !important;
+            box-shadow: inset 0 0 8px rgba(255, 193, 7, 0.3);
+            border: 2px solid #FFC107 !important;
+        }
+
+        .hora-current td {
+            font-weight: 600;
+            border-left: 6px solid #FFC107 !important;
+        }
+
+        .rahu-highlight-row {
+            background: linear-gradient(90deg, #fff3e0 0%, #ffe0b2 100%) !important;
+            border-left: 6px solid #FF7070 !important;
+            font-weight: 600;
+        }
+
+        .rahu-highlight-row td {
+            color: #d32f2f;
+        }
+
+        .hora-number {
+            font-weight: 600;
+            color: #2196F3;
+            width: 35px;
+        }
+
+        .hora-name {
+            font-weight: 600;
+            font-size: 13px;
+            min-width: 70px;
+        }
+
+        .hora-time {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 11px;
+            color: #666;
+            min-width: 110px;
+        }
+
+        .sub-hora-list {
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .sub-hora-item {
+            margin: 3px 0;
+            padding: 3px 0;
+        }
+
+        .sub-hora-name {
+            font-weight: 500;
+        }
+
+        .sub-hora-visha {
+            color: #d32f2f;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+
+        .view-toggle button {
+            grid-column: auto;
+            flex: 1;
+            max-width: 130px;
+            padding: 10px;
+        }
+
+        .view-toggle button.active {
+            background: #1976D2;
+        }
+
+        .view-toggle button:not(.active) {
+            background: #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sun-info {
+                grid-template-columns: 1fr;
+            }
+
+            .rahu-kala-home {
+                grid-template-columns: 1fr;
+            }
+
+            .current-hora-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .next-horavas {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
+
+            .next-hora-card {
+                padding: 6px;
+                font-size: 9px;
+            }
+
+            .next-hora-name {
+                font-size: 11px;
+            }
+
+            .hora-table {
+                font-size: 11px;
+            }
+
+            .hora-table td, .hora-table th {
+                padding: 8px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .current-hora-name {
+                font-size: 28px;
+            }
+        }
+
+        .next-horavas {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .next-hora-card {
+            background: white;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            border: 2px solid #ddd;
+            font-size: 10px;
+        }
+
+        .next-hora-card.active {
+            border: 3px solid #2196F3;
+            background: #f0f7ff;
+        }
+
+        .next-hora-num {
+            font-weight: 600;
+            color: #999;
+            font-size: 8px;
+            margin-bottom: 2px;
+        }
+
+        .next-hora-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .next-hora-times {
+            font-size: 9px;
+            color: #666;
+            font-family: 'Monaco', 'Courier New', monospace;
+            margin-bottom: 2px;
+        }
+
+        .next-hora-status {
+            font-size: 9px;
+            padding: 2px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .next-hora-status.good {
+            background: #90EE90;
+            color: #1b5e20;
+        }
+
+        .next-hora-status.bad {
+            background: #FFB6C1;
+            color: #b71c1c;
+        }
+
+        .next-hora-status.neutral {
+            background: #E0E0E0;
+            color: #333;
+        }
+
+        .next-good-time-section {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 3px solid #4caf50;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .next-good-time-label {
+            font-size: 11px;
+            color: #2e7d32;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .next-good-time-main {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 8px;
+        }
+
+        .next-good-time-details {
+            font-size: 13px;
+            color: #2e7d32;
+            font-family: 'Monaco', 'Courier New', monospace;
+            margin-bottom: 5px;
+        }
+
+        .next-good-time-sub {
+            font-size: 12px;
+            color: #558b2f;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(46, 125, 50, 0.3);
+        }
+
+        .next-good-time-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🕉️ Horawa</h1>
+            <p class="subtitle">කාල හෝරාව - Auspicious & Inauspicious Time Periods</p>
+            <div class="time-format-toggle">
+                <button class="time-format-btn active" onclick="setTimeFormat('24h')">24 Hour</button>
+                <button class="time-format-btn" onclick="setTimeFormat('12h')">12 Hour</button>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="yearSelect">Year</label>
+                <select id="yearSelect">
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025" selected>2025</option>
+                    <option value="2026">2026</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="monthSelect">Month</label>
+                <select id="monthSelect">
+                    <option value="0">1 - Jan</option>
+                    <option value="1">2 - Feb</option>
+                    <option value="2">3 - Mar</option>
+                    <option value="3">4 - Apr</option>
+                    <option value="4">5 - May</option>
+                    <option value="5">6 - Jun</option>
+                    <option value="6">7 - Jul</option>
+                    <option value="7">8 - Aug</option>
+                    <option value="8">9 - Sep</option>
+                    <option value="9">10 - Oct</option>
+                    <option value="10">11 - Nov</option>
+                    <option value="11">12 - Dec</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="daySelect">Day</label>
+                <select id="daySelect"></select>
+            </div>
+
+            <div class="control-group">
+                <label for="districtSelect">District</label>
+                <select id="districtSelect">
+                    <option value="Colombo">කොළඹ (Colombo)</option>
+                    <option value="Gampaha">ගම්පහ (Gampaha)</option>
+                    <option value="Kalutara">කළුතර (Kalutara)</option>
+                    <option value="Ratnapura">රත්නපුර (Ratnapura)</option>
+                    <option value="Matara">මාතර (Matara)</option>
+                    <option value="Galle">ගාල්ල (Galle)</option>
+                    <option value="Badulla">බදුල්ල (Badulla)</option>
+                    <option value="NuwEliya">නුවර එළිය (Nuwara Eliya)</option>
+                    <option value="Kandy">මහනුවර (Kandy)</option>
+                    <option value="Kegalle">කෑගල්ල (Kegalle)</option>
+                    <option value="Matale">මාතලේ (Matale)</option>
+                    <option value="Ampara">අම්පාර (Ampara)</option>
+                    <option value="Batticaloa">බත්තිකලෝ (Batticaloa)</option>
+                    <option value="Trinc">ත්‍රිකුණාමල (Trincomalee)</option>
+                    <option value="Jaffna">යාපනය (Jaffna)</option>
+                    <option value="Mullaitivu">මුලතිව් (Mullaitivu)</option>
+                    <option value="Kilinocchi">කිලිනොච්චි (Kilinochchi)</option>
+                    <option value="Mannar">මන්නාරම (Mannar)</option>
+                    <option value="Vavuniya">වවුනියා (Vavuniya)</option>
+                    <option value="Puttalam">පුත්තලම (Puttalam)</option>
+                    <option value="Anuradhapura">අනුරාධපුර (Anuradhapura)</option>
+                    <option value="Polonnaruwa">පොළොන්නරුව (Polonnaruwa)</option>
+                    <option value="Monaragala">මොණරාගල (Monaragala)</option>
+                    <option value="Kurunegala">කුරුණෑගල (Kurunegala)</option>
+                </select>
+            </div>
+
+            <button onclick="calculateHorawa()">Calculate Horawa</button>
+        </div>
+
+        <div class="view-toggle">
+            <button class="active" onclick="switchView('home')">HOME</button>
+            <button onclick="switchView('details')">DETAILS</button>
+        </div>
+
+        <!-- HOME VIEW -->
+        <div id="homeView" class="home-view">
+            <div class="current-time" id="currentTime">--:--:--</div>
+            
+            <div class="current-hora-layout" id="currentHoraLayout" style="display:none;">
+                <div class="current-hora-main">
+                    <div class="current-hora-label">Current Hora</div>
+                    <div class="current-hora-name" id="currentHoraName">--</div>
+                    <div class="current-hora-time" id="currentHoraTime">--:-- to --:--</div>
+                    <div>
+                        <span class="current-hora-status" id="currentHoraStatus">--</span>
+                    </div>
+                </div>
+
+                <div class="current-hora-sub">
+                    <div class="sub-hora-label">Current Sub-Horavas (Pancham Kala)</div>
+                    <div class="sub-hora-progress-container">
+                        <div class="sub-hora-progress-bar" id="subHoraProgressBar">
+                            <!-- Populated by JS with 5 segments -->
+                        </div>
+                    </div>
+                    <div class="sub-hora-legend">
+                        <div class="legend-item">
+                            <div class="legend-color good"></div>
+                            <span>Auspicious</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color bad"></div>
+                            <span>Malefic (විෂ)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color neutral"></div>
+                            <span>Neutral</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sun-info">
+                <div class="sun-item">
+                    <div class="sun-label">🌅 Sunrise</div>
+                    <div class="sun-time" id="sunriseTime">--:--</div>
+                </div>
+                <div class="sun-item">
+                    <div class="sun-label">🌇 Sunset</div>
+                    <div class="sun-time" id="sunsetTime">--:--</div>
+                </div>
+                <div class="sun-item">
+                    <div class="sun-label">🌅 Next Sunrise</div>
+                    <div class="sun-time" id="nextSunriseTime">--:--</div>
+                </div>
+            </div>
+
+            <div class="rahu-kala-home">
+                <div class="rahu-kala-box" id="rahuDayBox" style="display:none;">
+                    <div class="rahu-kala-label">☀️ Daytime Rahu</div>
+                    <div class="rahu-kala-time" id="rahuDayTime">--:-- to --:--</div>
+                    <div class="rahu-kala-indicator">රාහු</div>
+                </div>
+                <div class="rahu-kala-box" id="rahuNightBox" style="display:none;">
+                    <div class="rahu-kala-label">🌙 Nighttime Rahu</div>
+                    <div class="rahu-kala-time" id="rahuNightTime">--:-- to --:--</div>
+                    <div class="rahu-kala-indicator">රාහු</div>
+                </div>
+            </div>
+
+            <div class="next-good-time-section" id="nextGoodTimeSection" style="display:none;">
+                <div class="next-good-time-icon">✓ ⏰</div>
+                <div class="next-good-time-label">Next Auspicious Time</div>
+                <div class="next-good-time-main" id="nextGoodTimeHora">--</div>
+                <div class="next-good-time-details" id="nextGoodTimeRange">--:-- to --:--</div>
+                <div class="next-good-time-sub" id="nextGoodTimeInfo">Sub-hora: --</div>
+            </div>
+
+            <div class="next-horavas-container" id="nextHoravasContainer" style="display:none;">
+                <div style="font-size: 12px; font-weight: 600; color: #999; margin-bottom: 8px; text-transform: uppercase;">Next 5 Horavas</div>
+                <div class="next-horavas">
+                    <div class="next-hora-card active" id="hora0">
+                        <div class="next-hora-num">Now</div>
+                        <div class="next-hora-name" id="horaName0">--</div>
+                        <div class="next-hora-times" id="horaTimes0">--:--<br>to<br>--:--</div>
+                        <div class="next-hora-status neutral" id="horaStatus0">--</div>
+                    </div>
+                    <div class="next-hora-card" id="hora1">
+                        <div class="next-hora-num">+1</div>
+                        <div class="next-hora-name" id="horaName1">--</div>
+                        <div class="next-hora-times" id="horaTimes1">--:--<br>to<br>--:--</div>
+                        <div class="next-hora-status neutral" id="horaStatus1">--</div>
+                    </div>
+                    <div class="next-hora-card" id="hora2">
+                        <div class="next-hora-num">+2</div>
+                        <div class="next-hora-name" id="horaName2">--</div>
+                        <div class="next-hora-times" id="horaTimes2">--:--<br>to<br>--:--</div>
+                        <div class="next-hora-status neutral" id="horaStatus2">--</div>
+                    </div>
+                    <div class="next-hora-card" id="hora3">
+                        <div class="next-hora-num">+3</div>
+                        <div class="next-hora-name" id="horaName3">--</div>
+                        <div class="next-hora-times" id="horaTimes3">--:--<br>to<br>--:--</div>
+                        <div class="next-hora-status neutral" id="horaStatus3">--</div>
+                    </div>
+                    <div class="next-hora-card" id="hora4">
+                        <div class="next-hora-num">+4</div>
+                        <div class="next-hora-name" id="horaName4">--</div>
+                        <div class="next-hora-times" id="horaTimes4">--:--<br>to<br>--:--</div>
+                        <div class="next-hora-status neutral" id="horaStatus4">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DETAILS VIEW -->
+        <div id="detailsView" class="hidden">
+            <div class="sun-info">
+                <div class="sun-item">
+                    <div class="sun-label">🌅 Sunrise</div>
+                    <div class="sun-time" id="detailsSunriseTime">--:--</div>
+                </div>
+                <div class="sun-item">
+                    <div class="sun-label">🌇 Sunset</div>
+                    <div class="sun-time" id="detailsSunsetTime">--:--</div>
+                </div>
+                <div class="sun-item">
+                    <div class="sun-label">📅 Date Info</div>
+                    <div class="sun-time" id="dateInfo">--</div>
+                </div>
+            </div>
+
+            <div class="hora-table-section">
+                <div class="section-title">24 Hour Horavas (කාල හෝරාවන්)</div>
+                <div class="loading" id="tableLoading">Calculating...</div>
+                <table class="hora-table" id="horaTable" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Hora</th>
+                            <th>Time Range</th>
+                            <th>Pancham Kala (Sub-Horavas)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="horaTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timeFormat = '24h';
+
+        function setTimeFormat(format) {
+            timeFormat = format;
+            document.querySelectorAll('.time-format-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            calculateHorawa();
+        }
+
+        function formatTime(decimalHours, includeSeconds = true) {
+            let hour = Math.floor(decimalHours);
+            const minutesDecimal = (decimalHours - hour) * 60;
+            const minutes = Math.floor(minutesDecimal);
+            const seconds = Math.round((minutesDecimal - minutes) * 60);
+
+            if (timeFormat === '12h') {
+                const period = hour >= 12 ? 'PM' : 'AM';
+                hour = hour % 12;
+                if (hour === 0) hour = 12;
+                const pad = (n) => String(n).padStart(2, '0');
+                if (includeSeconds) {
+                    return `${hour}:${pad(minutes)}:${pad(seconds)} ${period}`;
+                } else {
+                    return `${hour}:${pad(minutes)} ${period}`;
+                }
+            } else {
+                const pad = (n) => String(n).padStart(2, '0');
+                if (includeSeconds) {
+                    return `${pad(hour)}:${pad(minutes)}:${pad(seconds)}`;
+                } else {
+                    return `${pad(hour)}:${pad(minutes)}`;
+                }
+            }
+        }
+
+        class SunriseSunset {
+            constructor(year, month, day, latitude, longitude) {
+                this.utcFullYear = year;
+                this.utcMonth = month;
+                this.utcDay = day;
+                this.latitude = latitude;
+                this.longitude = longitude;
+                this.zenith = 90;
+                this.lngHour = longitude / 15;
+                this.rising = true;
+            }
+
+            getDOY() {
+                const N1 = Math.floor((275 * this.utcMonth) / 9);
+                const N2 = Math.floor((this.utcMonth + 9) / 12);
+                const N3 = 1 + Math.floor(((this.utcFullYear - 4 * Math.floor(this.utcFullYear / 4) + 2) / 3));
+                return N1 - N2 * N3 + this.utcDay - 30;
+            }
+
+            approximateTime() {
+                const doy = this.getDOY();
+                return this.rising ? doy + (6 - this.lngHour) / 24 : doy + (18 - this.lngHour) / 24;
+            }
+
+            meanAnomaly() {
+                const t = this.approximateTime();
+                return 0.9856 * t - 3.289;
+            }
+
+            trueLongitude() {
+                const M = this.meanAnomaly();
+                const L = M + 1.916 * Math.sin(M * Math.PI / 180) + 0.02 * Math.sin(2 * M * Math.PI / 180) + 282.634;
+                return L % 360;
+            }
+
+            rightAscension() {
+                const L = this.trueLongitude();
+                let RA = Math.atan(0.91764 * Math.tan(L * Math.PI / 180)) * 180 / Math.PI;
+                RA = RA % 360;
+                const Lquadrant = Math.floor(L / 90) * 90;
+                const RAquadrant = Math.floor(RA / 90) * 90;
+                return (RA + Lquadrant - RAquadrant) / 15;
+            }
+
+            sinDec() {
+                const L = this.trueLongitude();
+                return 0.39782 * Math.sin(L * Math.PI / 180);
+            }
+
+            cosDec() {
+                return Math.cos(Math.asin(this.sinDec()));
+            }
+
+            localMeanTime() {
+                const cosH = (Math.cos(this.zenith * Math.PI / 180) - this.sinDec() * Math.sin(this.latitude * Math.PI / 180)) / (this.cosDec() * Math.cos(this.latitude * Math.PI / 180));
+                if (cosH > 1) return -999;
+                if (cosH < -1) return -998;
+                const H = (this.rising ? 360 - Math.acos(cosH) * 180 / Math.PI : Math.acos(cosH) * 180 / Math.PI) / 15;
+                const RA = this.rightAscension();
+                const t = this.approximateTime();
+                return H + RA - 0.06571 * t - 6.622;
+            }
+
+            hoursRange(h) {
+                return ((h % 24) + 24) % 24;
+            }
+
+            UTCTime() {
+                const T = this.localMeanTime();
+                return this.hoursRange(T - this.lngHour);
+            }
+
+            sunriseUtcHours() {
+                this.rising = true;
+                return this.UTCTime();
+            }
+
+            sunsetUtcHours() {
+                this.rising = false;
+                return this.UTCTime();
+            }
+
+            sunriseLocalHours(gmt) {
+                return this.hoursRange(gmt + this.sunriseUtcHours());
+            }
+
+            sunsetLocalHours(gmt) {
+                return this.hoursRange(gmt + this.sunsetUtcHours());
+            }
+        }
+
+        const districtCoords = {
+            "Colombo": [6.93194, 79.84778],
+            "Gampaha": [7.083, 80.000],
+            "Kalutara": [6.583, 80.167],
+            "Ratnapura": [6.583, 80.583],
+            "Matara": [5.950, 80.533],
+            "Galle": [6.050, 80.217],
+            "Badulla": [6.983, 81.050],
+            "NuwEliya": [7.000, 80.750],
+            "Kandy": [7.250, 80.750],
+            "Kegalle": [7.300, 80.400],
+            "Matale": [7.667, 80.750],
+            "Ampara": [7.083, 81.750],
+            "Batticaloa": [7.750, 81.333],
+            "Trinc": [8.583, 81.083],
+            "Jaffna": [9.667, 80.167],
+            "Mullaitivu": [9.233, 80.533],
+            "Kilinocchi": [9.417, 80.417],
+            "Mannar": [8.867, 80.067],
+            "Vavuniya": [8.833, 80.500],
+            "Puttalam": [8.000, 80.000],
+            "Anuradhapura": [8.333, 80.500],
+            "Polonnaruwa": [8.000, 81.000],
+            "Monaragala": [6.667, 81.333],
+            "Kurunegala": [7.750, 81.333]
+        };
+
+        const horaSinhala = ["රවි", "චන්ද්‍ර", "කුජ", "බුධ", "ගුරු", "ශුක්‍ර", "ශනි"];
+        const horaStatus = [0, 1, -1, 0, 1, 1, -1];
+        const chart = [0, 5, 3, 1, 6, 4, 2];
+        const dayChart = [0, 3, 6, 2, 5, 1, 4];
+        const vishaChart = [4, 1, 6, 5, 1, 0, 6];
+        const rahuSlots = [8, 2, 7, 5, 6, 4, 3];
+
+        function getHora(dayOfWeek, slot) {
+            const y = dayChart[dayOfWeek];
+            const x = chart[(y + slot) % 7];
+            return horaSinhala[x];
+        }
+
+        function getHoraStatus(dayOfWeek, slot) {
+            const y = dayChart[dayOfWeek];
+            const x = chart[(y + slot) % 7];
+            return horaStatus[x];
+        }
+
+        function getHoraNum(dayOfWeek, slot) {
+            const y = dayChart[dayOfWeek];
+            return chart[(y + slot) % 7];
+        }
+
+        function getSubHora(horaNum, slot) {
+            return horaSinhala[(horaNum + slot) % 7];
+        }
+
+        function isVishaHora(horaNum, slot) {
+            const subHora = (horaNum + slot) % 7;
+            return vishaChart[horaNum] === subHora;
+        }
+
+        function isRahuSlot(i, dayOfWeek) {
+            return i === rahuSlots[dayOfWeek] || (i - 8) === rahuSlots[dayOfWeek];
+        }
+
+        function isNeutralHora(horaIndex) {
+            // Index 0=Ravi, 2=Kujan, 6=Shani are neutral when parent is green
+            return horaIndex === 0 || horaIndex === 2 || horaIndex === 6;
+        }
+
+        function calculateHorawa() {
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const day = parseInt(document.getElementById('daySelect').value);
+            const district = document.getElementById('districtSelect').value;
+
+            const coords = districtCoords[district] || [6.93194, 79.84778];
+            const latitude = coords[0];
+            const longitude = coords[1];
+
+            const place = new SunriseSunset(year, month + 1, day, latitude, longitude);
+            const nplace = new SunriseSunset(year, month + 1, day + 1, latitude, longitude);
+
+            const sunrise = place.sunriseLocalHours(5.5);
+            const sunset = place.sunsetLocalHours(5.5);
+            const nsunrise = nplace.sunriseLocalHours(5.5);
+
+            const hourDurationDay = (sunset - sunrise) / 12;
+            const hourDurationNight = (nsunrise - sunset) / 12;
+            const rahuHourDurationDay = (sunset - sunrise) / 8;
+            const rahuHourDurationNight = (nsunrise - sunset) / 8;
+
+            const dateObj = new Date(year, month, day);
+            const dayOfWeek = dateObj.getDay();
+
+            const horaList = [];
+
+            for (let i = 1; i <= 24; i++) {
+                let horaStart, horaEnd, subHoraDuration;
+
+                if (i <= 12) {
+                    horaStart = sunrise + (hourDurationDay * (i - 1));
+                    horaEnd = horaStart + hourDurationDay;
+                    subHoraDuration = hourDurationDay / 5;
+                } else {
+                    horaStart = sunset + (hourDurationNight * (i - 13));
+                    horaEnd = horaStart + hourDurationNight;
+                    subHoraDuration = hourDurationNight / 5;
+                }
+
+                const horaName = getHora(dayOfWeek, i - 1);
+                const status = getHoraStatus(dayOfWeek, i - 1);
+                const horaNum = getHoraNum(dayOfWeek, i - 1);
+
+                const subHoras = [];
+                for (let j = 1; j <= 5; j++) {
+                    const subHoraName = getSubHora(horaNum, j - 1);
+                    const isVisha = isVishaHora(horaNum, j - 1);
+                    const subStart = horaStart + (subHoraDuration * (j - 1));
+                    const subEnd = subStart + subHoraDuration;
+
+                    subHoras.push({
+                        name: subHoraName + (isVisha ? " (විෂ)" : ""),
+                        startTime: formatTime(subStart, false),
+                        endTime: formatTime(subEnd, false),
+                        isVisha: isVisha
+                    });
+                }
+
+                const hora = {
+                    horaNumber: i,
+                    horaName: horaName,
+                    startTime: formatTime(horaStart, false),
+                    endTime: formatTime(horaEnd, false),
+                    startDecimal: horaStart,
+                    endDecimal: horaEnd,
+                    status: status,
+                    horaIndex: horaNum,
+                    subHoras: subHoras
+                };
+
+                horaList.push(hora);
+            }
+
+            let rahuDayKala = null;
+            let rahuNightKala = null;
+            for (let i = 1; i <= 8; i++) {
+                if (isRahuSlot(i, dayOfWeek)) {
+                    const rahuStart = sunrise + (rahuHourDurationDay * (i - 1));
+                    const rahuEnd = rahuStart + rahuHourDurationDay;
+                    rahuDayKala = {
+                        startTime: formatTime(rahuStart, false),
+                        endTime: formatTime(rahuEnd, false)
+                    };
+                    break;
+                }
+            }
+            for (let i = 9; i <= 16; i++) {
+                if (isRahuSlot(i, dayOfWeek)) {
+                    const rahuStart = sunset + (rahuHourDurationNight * (i - 9));
+                    const rahuEnd = rahuStart + rahuHourDurationNight;
+                    rahuNightKala = {
+                        startTime: formatTime(rahuStart, false),
+                        endTime: formatTime(rahuEnd, false)
+                    };
+                    break;
+                }
+            }
+
+            displayResults({
+                sunrise: formatTime(sunrise, false),
+                sunset: formatTime(sunset, false),
+                nextSunrise: formatTime(nsunrise, false),
+                horaList: horaList,
+                rahuDayKala: rahuDayKala,
+                rahuNightKala: rahuNightKala,
+                date: dateObj,
+                district: district,
+                dayOfWeek: dayOfWeek
+            });
+        }
+
+        function displayResults(data) {
+            document.getElementById('sunriseTime').textContent = data.sunrise;
+            document.getElementById('sunsetTime').textContent = data.sunset;
+            document.getElementById('nextSunriseTime').textContent = data.nextSunrise;
+
+            document.getElementById('detailsSunriseTime').textContent = data.sunrise;
+        const horaSinhala = ["රවි", "චන්ද්‍ර", "කුජ", "බුධ", "ගුරු", "ශුක්‍ර", "ශනි"];
+
+            const dateStr = data.date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('dateInfo').textContent = dateStr;
+
+            const now = new Date();
+            const currentHourDecimal = now.getHours() + now.getMinutes() / 60;
+            
+            let currentHoraIndex = 0;
+            for (let i = 0; i < data.horaList.length; i++) {
+                const hora = data.horaList[i];
+                if (currentHourDecimal >= hora.startDecimal && currentHourDecimal < hora.endDecimal) {
+                    currentHoraIndex = i;
+                    break;
+                }
+            }
+
+            const currentHora = data.horaList[currentHoraIndex];
+            document.getElementById('currentHoraName').textContent = currentHora.horaName;
+            document.getElementById('currentHoraTime').textContent = `${currentHora.startTime} to ${currentHora.endTime}`;
+            
+            const statusEl = document.getElementById('currentHoraStatus');
+            if (currentHora.status === 1) {
+                statusEl.textContent = '✓ Auspicious (ශුභ)';
+                statusEl.className = 'current-hora-status status-good';
+            } else if (currentHora.status === -1) {
+                statusEl.textContent = '⚠ Inauspicious (අශුභ)';
+                statusEl.className = 'current-hora-status status-bad';
+            } else {
+                statusEl.textContent = '→ Neutral (මධ්‍යස්ථ)';
+                statusEl.className = 'current-hora-status status-neutral';
+            }
+
+            // Display current hora's sub-horavas as progress bar
+            const subHoraProgressBar = document.getElementById('subHoraProgressBar');
+            subHoraProgressBar.innerHTML = '';
+            
+            const currentTimeDecimal = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+            
+            let currentSubHoraIndex = -1;
+            const parentHoraStatus = currentHora.status;
+
+            currentHora.subHoras.forEach((subHora, idx) => {
+                const segment = document.createElement('div');
+                segment.className = 'sub-hora-segment';
+                
+                const isVisha = subHora.name.includes('(විෂ)');
+                const shortName = subHora.name.replace(' (විෂ)', '').substring(0, 3);
+                
+                let segmentClass;
+                
+                if (isVisha) {
+                    segmentClass = 'bad-visha';
+                } else if (parentHoraStatus === 1) {
+                    // Parent is GREEN
+                    // Check if the sub-hora NAME is Ravi (0), Kujan (2), or Shani (6)
+                    const subHoraIndex = (currentHora.horaIndex + idx) % 7;
+                    if (subHoraIndex === 0 || subHoraIndex === 2 || subHoraIndex === 6) {
+                        // These sub-horas are neutral when parent is green
+                        segmentClass = 'neutral';
+                    } else {
+                        // Others are white/light
+                        segmentClass = 'good';
+                    }
+                } else if (parentHoraStatus === -1) {
+                    segmentClass = 'bad';
+                } else {
+                    segmentClass = 'neutral';
+                }
+                
+                segment.classList.add(segmentClass);
+                
+                const startTime = subHora.startTime.substring(0, 5);
+                const endTime = subHora.endTime.substring(0, 5);
+                const timePeriod = `${startTime}\n${endTime}`;
+                
+                segment.innerHTML = `
+                    <div class="sub-hora-segment-label">${shortName}</div>
+                    <div class="sub-hora-segment-time">${timePeriod}</div>
+                `;
+                
+                const [shStart, smStart] = subHora.startTime.split(':').map(Number);
+                const [shEnd, smEnd] = subHora.endTime.split(':').map(Number);
+                const startDecimal = shStart + smStart / 60;
+                const endDecimal = shEnd + smEnd / 60;
+                
+                if (currentTimeDecimal >= startDecimal && currentTimeDecimal < endDecimal) {
+                    segment.classList.add('active');
+                    currentSubHoraIndex = idx;
+                }
+                
+                const vishText = isVisha ? ' (විෂ - Malefic)' : '';
+                segment.title = `${shortName}${vishText}\n${subHora.startTime} - ${subHora.endTime}`;
+                
+                subHoraProgressBar.appendChild(segment);
+            });
+
+            if (currentSubHoraIndex >= 0) {
+                const pin = document.createElement('div');
+                pin.className = 'sub-hora-pin';
+                pin.style.left = ((currentSubHoraIndex + 0.5) / 5 * 100) + '%';
+                subHoraProgressBar.insertBefore(pin, subHoraProgressBar.firstChild);
+            }
+
+            document.getElementById('currentHoraLayout').style.display = 'grid';
+            document.getElementById('nextHoravasContainer').style.display = 'block';
+
+            for (let i = 0; i < 5; i++) {
+                const horaIdx = (currentHoraIndex + i) % data.horaList.length;
+                const hora = data.horaList[horaIdx];
+                
+                document.getElementById(`horaName${i}`).textContent = hora.horaName;
+                document.getElementById(`horaTimes${i}`).innerHTML = `${hora.startTime}<br>to<br>${hora.endTime}`;
+                
+                const statusElem = document.getElementById(`horaStatus${i}`);
+                if (hora.status === 1) {
+                    statusElem.textContent = '✓ Good';
+                    statusElem.className = 'next-hora-status good';
+                } else if (hora.status === -1) {
+                    statusElem.textContent = '⚠ Bad';
+                    statusElem.className = 'next-hora-status bad';
+                } else {
+                    statusElem.textContent = '→ Neutral';
+                    statusElem.className = 'next-hora-status neutral';
+                }
+
+                const card = document.getElementById(`hora${i}`);
+                if (i === 0) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            }
+
+            if (data.rahuDayKala) {
+                document.getElementById('rahuDayTime').textContent = `${data.rahuDayKala.startTime} to ${data.rahuDayKala.endTime}`;
+                document.getElementById('rahuDayBox').style.display = 'block';
+            }
+
+            if (data.rahuNightKala) {
+                document.getElementById('rahuNightTime').textContent = `${data.rahuNightKala.startTime} to ${data.rahuNightKala.endTime}`;
+                document.getElementById('rahuNightBox').style.display = 'block';
+            }
+
+            // Find next good auspicious time
+            const rahuHoraNumbersForCheck = [];
+            for (let i = 1; i <= 16; i++) {
+                if (isRahuSlot(i, data.dayOfWeek)) {
+                    rahuHoraNumbersForCheck.push(i);
+                    rahuHoraNumbersForCheck.push(i + 8);
+                }
+            }
+
+            let nextGoodTime = null;
+            let nextGoodSubHora = null;
+
+            // Start from current hora index and look forward
+            for (let i = currentHoraIndex; i < currentHoraIndex + 24; i++) {
+                const horaIdx = i % data.horaList.length;
+                const hora = data.horaList[horaIdx];
+
+                // Check if this hora is auspicious (status = 1) and not Rahu
+                if (hora.status === 1 && !rahuHoraNumbersForCheck.includes(hora.horaNumber)) {
+                    // Find a good sub-hora in this hora
+                    for (let j = 0; j < hora.subHoras.length; j++) {
+                        const subHora = hora.subHoras[j];
+                        const isVisha = subHora.name.includes('(විෂ)');
+                        
+                        // Good sub-hora = not malefic AND after current time
+                        if (!isVisha) {
+                            const [sh, sm] = subHora.startTime.split(':').map(Number);
+                            const subStartDecimal = sh + sm / 60;
+                            
+                            // Only consider if it's after current time
+                            if (subStartDecimal > currentTimeDecimal || horaIdx > currentHoraIndex) {
+                                nextGoodTime = hora;
+                                nextGoodSubHora = subHora;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (nextGoodTime) break;
+                }
+            }
+
+            // Display next good time if found
+            if (nextGoodTime && nextGoodSubHora) {
+                document.getElementById('nextGoodTimeHora').textContent = nextGoodTime.horaName;
+                document.getElementById('nextGoodTimeRange').textContent = `${nextGoodTime.startTime} to ${nextGoodTime.endTime}`;
+                document.getElementById('nextGoodTimeInfo').textContent = `Sub-hora: ${nextGoodSubHora.name.replace(' (විෂ)', '')} (${nextGoodSubHora.startTime} - ${nextGoodSubHora.endTime})`;
+                document.getElementById('nextGoodTimeSection').style.display = 'block';
+            }
+
+            const tbody = document.getElementById('horaTableBody');
+            tbody.innerHTML = '';
+
+            const rahuHoraNumbers = [];
+            for (let i = 1; i <= 16; i++) {
+                if (isRahuSlot(i, data.dayOfWeek)) {
+                    rahuHoraNumbers.push(i);
+                    rahuHoraNumbers.push(i + 8);
+                }
+            }
+
+            data.horaList.forEach(hora => {
+                const tr = document.createElement('tr');
+                let rowClass = 'hora-neutral';
+                let isRahuRow = false;
+
+                if (hora.status === 1) rowClass = 'hora-good';
+                else if (hora.status === -1) rowClass = 'hora-bad';
+
+                if (rahuHoraNumbers.includes(hora.horaNumber)) {
+                    tr.className = 'rahu-highlight-row';
+                    isRahuRow = true;
+                } else {
+                    tr.className = rowClass;
+                }
+
+                if (hora.horaNumber === currentHora.horaNumber) {
+                    tr.classList.add('hora-current');
+                }
+
+                let subHorasHTML = '';
+                hora.subHoras.forEach(sub => {
+                    const vishiClass = sub.isVisha ? 'sub-hora-visha' : 'sub-hora-name';
+                    subHorasHTML += `<div class="sub-hora-item"><span class="${vishiClass}">${sub.name}</span> ${sub.startTime}</div>`;
+                });
+
+                const rahuBadge = isRahuRow ? ' <span style="color:#d32f2f; font-weight:700; margin-left:10px;">🚫 RAHU</span>' : '';
+
+                tr.innerHTML = `
+                    <td class="hora-number">${hora.horaNumber}</td>
+                    <td class="hora-name">${hora.horaName}${rahuBadge}</td>
+                    <td class="hora-time">${hora.startTime}<br>to<br>${hora.endTime}</td>
+                    <td><div class="sub-hora-list">${subHorasHTML}</div></td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('tableLoading').style.display = 'none';
+            document.getElementById('horaTable').style.display = 'table';
+        }
+
+        function switchView(view) {
+            const homeView = document.getElementById('homeView');
+            const detailsView = document.getElementById('detailsView');
+            const buttons = document.querySelectorAll('.view-toggle button');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (view === 'home') {
+                homeView.style.display = 'block';
+                detailsView.classList.add('hidden');
+                buttons[0].classList.add('active');
+            } else {
+                homeView.style.display = 'none';
+                detailsView.classList.remove('hidden');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        function initializeDayDropdown() {
+            const daySelect = document.getElementById('daySelect');
+            daySelect.innerHTML = '';
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                daySelect.appendChild(option);
+            }
+            const today = new Date();
+            daySelect.value = today.getDate();
+        }
+
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeStr = formatTime(now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600, true);
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeDayDropdown();
+            const today = new Date();
+            document.getElementById('yearSelect').value = today.getFullYear();
+            document.getElementById('monthSelect').value = today.getMonth();
+            document.getElementById('daySelect').value = today.getDate();
+            
+            calculateHorawa();
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+            setInterval(calculateHorawa, 10000);
+        });
+
+        document.getElementById('yearSelect').addEventListener('change', calculateHorawa);
+        document.getElementById('monthSelect').addEventListener('change', calculateHorawa);
+        document.getElementById('daySelect').addEventListener('change', calculateHorawa);
+        document.getElementById('districtSelect').addEventListener('change', calculateHorawa);
+    </script>
+</body>
+</html>
